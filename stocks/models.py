@@ -17,7 +17,7 @@ class Equipment(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = '  Equipment'
+        verbose_name = ' Equipment'
 
     @mark_safe
     def image_tag(self):
@@ -43,15 +43,15 @@ class Stock(models.Model):
         return self.equipment.name
 
     class Meta:
-        verbose_name = ' Equipments Stock'
+        verbose_name = 'Equipments Stock'
         ordering = ['-updated']
-        unique_together = ("user", "equipment")
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=['user', 'equipment', ],
-        #         name="Can't create multiple stock of same equipment,So update the existing equipment's quantity"
-        #     ),
-        # ]
+        # unique_together = (("user", "equipment"),)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'equipment', ],
+                name="Can't create multiple stock of same equipment,So update the existing equipment's quantity"
+            ),
+        ]
 
     @mark_safe
     def image_tag(self):
@@ -79,7 +79,7 @@ class Request(models.Model):
         return self.equipment.name
 
     class Meta:
-        verbose_name = 'Equipment Request'
+        verbose_name = '  Equipment Request'
         ordering = ['-created']
 
     @mark_safe

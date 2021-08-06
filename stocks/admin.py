@@ -105,9 +105,6 @@ class StockForm(forms.ModelForm):
                 return
 
             if quantity >= superuser_equipment.quantity:
-                # superuser_equipment.quantity -= quantity
-                # superuser_equipment.save()
-
                 raise forms.ValidationError(
                     f'Stock over! You "{equipment}" quantity is {superuser_equipment.quantity}.')
             return self.cleaned_data
@@ -143,6 +140,7 @@ class StockAdmin(admin.ModelAdmin):
                 s_dec_quantity = obj.quantity-self.previous_quantity
                 superuser_equipment.quantity -=s_dec_quantity
             superuser_equipment.save()
+            
         return super().response_post_save_change(request, obj)
 
     def response_post_save_add(self, request, obj):
@@ -150,6 +148,11 @@ class StockAdmin(admin.ModelAdmin):
         superuser_equipment = superuser.stock_set.all().get(equipment=obj.equipment)
         superuser_equipment.quantity -= obj.quantity
         superuser_equipment.save()
+        
+        # if  Stock.objects.filter(user=obj.user,equipment=obj.equipment).exists:
+        #     raise forms.ValidationError(
+        #     f'Stock of "{obj.equipment}" is already exist for {obj.user}.Please Update that!"')
+        
 
         return super().response_post_save_add(request, obj)
 

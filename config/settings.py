@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     # local app
     'stocks',
     'accounts',
+    'articles',
 
 
 ]
