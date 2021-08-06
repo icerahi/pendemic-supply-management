@@ -111,9 +111,6 @@ class StockAdmin(admin.ModelAdmin):
 
     previous_quantity =0
     def get_form(self, request, obj, **kwargs):
-        print("get form")
-        print(request.POST.get('quantity'))
-        print(obj.quantity)
         self.previous_quantity = obj.quantity
         return super().get_form(request, obj=obj, **kwargs)
     
@@ -121,12 +118,18 @@ class StockAdmin(admin.ModelAdmin):
     
  
     def response_post_save_change(self, request, obj):
-        print("When in edit mode it is executing")
-        print(request.POST['quantity'])
-        print('previous quantity',self.previous_quantity)
-        print(obj.quantity)
-        if obj.is_updated == False:
-            messages.error(request, "ohh noooo")
+        if self.previous_quantity != obj.quantity:
+            superuser = User.objects.get(is_superuser=True)
+            superuser_equipment = superuser.stock_set.all().get(equipment=obj.equipment)
+            if self.previous_quantity > obj.quantity:
+                s_inc_quantity = self.previous_quantity-obj.quantity
+                superuser_equipment.quantity += s_inc_quantity
+            if self.previous_quantity < obj.quantity:
+                s_dec_quantity = obj.quantity-self.previous_quantity
+                superuser_equipment.quantity -=s_dec_quantity
+            superuser_equipment.save()
+  
+ 
         return super().response_post_save_change(request, obj)
 
     def response_post_save_add(self, request, obj):
