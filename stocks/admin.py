@@ -22,20 +22,28 @@ class RequestForm(forms.ModelForm):
         status = self.cleaned_data.get('accepted')
         equipment = self.cleaned_data.get('equipment')
         quantity = self.cleaned_data.get('quantity')
+        user = self.cleaned_data.get('user')
 
         if status == True:
             superuser = User.objects.get(is_superuser=True)
-            superuser_equipment = superuser.stock_set.all().get(equipment=equipment)
-
+            try:
+                superuser_equipment = superuser.stock_set.all().get(equipment=equipment)
+            except:
+                raise forms.ValidationError(
+                    f'Stock of "{equipment}" not added yet in Stock of Admin!"')
+                return
             if quantity <= superuser_equipment.quantity:
                 superuser_equipment.quantity -= quantity
                 superuser_equipment.save()
+                Stock.objects.get_or_create(
+                    user=user, equipment=equipment, quantity=quantity)
 
             else:
 
                 raise forms.ValidationError(
                     f'Stock over! You "{equipment}" quantity is {superuser_equipment.quantity}.')
             return self.cleaned_data
+
         return self.cleaned_data
 
 
@@ -77,16 +85,19 @@ class StockForm(forms.ModelForm):
             superuser = User.objects.get(is_superuser=True)
             try:
                 superuser_equipment = superuser.stock_set.all().get(equipment=equipment)
-                if quantity <= superuser_equipment.quantity:
-                    superuser_equipment.quantity -= quantity
-                    superuser_equipment.save()
-                else:
-                    raise forms.ValidationError(
-                        f'Stock over! You "{equipment}" quantity is {superuser_equipment.quantity}.')
-                return self.cleaned_data
             except:
                 raise forms.ValidationError(
-                    f'Stock of "{equipment}" not added yet in Admin!"')
+                    f'Stock of "{equipment}" not added yet in Stock of Admin!"')
+                return
+
+            if quantity >= superuser_equipment.quantity:
+                # superuser_equipment.quantity -= quantity
+                # superuser_equipment.save()
+
+                raise forms.ValidationError(
+                    f'Stock over! You "{equipment}" quantity is {superuser_equipment.quantity}.')
+            return self.cleaned_data
+
         return self.cleaned_data
 
 
@@ -98,18 +109,33 @@ class StockAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'equipment__name',)
     list_filter = (('user__username'), ('equipment__name'),)
 
-    # def save_model(self, request, obj, form, change):
-    #     if obj.user != request.user:
-    #         # print(equipment)
-    #         superuser_equipment = request.user.stock_set.all().get(
-    #             equipment=obj.equipment)
-    #         if obj.quantity < superuser_equipment.quantity:
-    #             superuser_equipment.quantity -= obj.quantity
-    #             superuser_equipment.save()
-    #             return super().save_model(request, obj, form, change)
+    previous_quantity =0
+    def get_form(self, request, obj, **kwargs):
+        print("get form")
+        print(request.POST.get('quantity'))
+        print(obj.quantity)
+        self.previous_quantity = obj.quantity
+        return super().get_form(request, obj=obj, **kwargs)
+    
+ 
+    
+ 
+    def response_post_save_change(self, request, obj):
+        print("When in edit mode it is executing")
+        print(request.POST['quantity'])
+        print('previous quantity',self.previous_quantity)
+        print(obj.quantity)
+        if obj.is_updated == False:
+            messages.error(request, "ohh noooo")
+        return super().response_post_save_change(request, obj)
 
-    #         else:
-    #             messages.error(request, 'Central Stock Over')
+    def response_post_save_add(self, request, obj):
+        superuser = User.objects.get(is_superuser=True)
+        superuser_equipment = superuser.stock_set.all().get(equipment=obj.equipment)
+        superuser_equipment.quantity -= obj.quantity
+        superuser_equipment.save()
+
+        return super().response_post_save_add(request, obj)
 
 
 admin.site.site_header = "Pendemic Supply Management"
