@@ -35,7 +35,7 @@ class Stock(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
 
-    is_updated = models.BooleanField(default=False)
+ 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -67,10 +67,11 @@ class Request(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.IntegerField()
 
     message = models.TextField()
-    accepted = models.BooleanField(default=False)
+  
+    status   = models.CharField(max_length=10,default='p',choices=(('p','Pending'),('a','Accepted'),('d','Delivered'),('c','Cancelled')))
 
     created = models.DateTimeField(auto_now_add=True)
 
