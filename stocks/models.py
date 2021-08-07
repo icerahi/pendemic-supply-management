@@ -69,7 +69,7 @@ class Request(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
-    message = models.TextField()
+    message = models.TextField(null=True,blank=True)
   
     status   = models.CharField(max_length=10,default='p',choices=(('p','Pending'),('a','Accepted'),('d','Delivered'),('c','Cancelled')))
 

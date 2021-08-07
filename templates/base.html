@@ -115,6 +115,8 @@
             <div class="collapse navbar-collapse justify-content-end">
         
               <ul class="navbar-nav">
+              <a href="{% url 'logout' %}">
+              {{request.user.username}}
                     <i class="material-icons">logout</i>
                   </a>
               

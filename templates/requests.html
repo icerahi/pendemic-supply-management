@@ -33,109 +33,27 @@
                         </th>
                       </thead>
                       <tbody>
+                      {% for object in object_list %}
                         <tr>
                           <td>
-                            1
+                            {{object.equipment.name}}
                           </td>
                           <td>
-                            Dakota Rice
+                            <img height="30" width="30" src="{{object.equipment.image.url}}"/>
                           </td>
                           <td>
-                            Niger
+                            {{object.quantity}}
                           </td>
                           <td>
-                            Oud-Turnhout
+                            {{object.message}}
                           </td>
-                          <td class="text-primary">
-                            $36,738
+                          <td>
+                           {{object.created}}
                           </td>
-                          <td> <span class="bg-danger ws-700"> Delivered</span> </td>
+                          <td> <span class="bg-danger ws-700">  {{object.get_status_display}}</span> </td>
                         </tr>
-                        <tr>
-                          <td>
-                            2
-                          </td>
-                          <td>
-                            Minerva Hooper
-                          </td>
-                          <td>
-                            Curaçao
-                          </td>
-                          <td>
-                            Sinaai-Waas
-                          </td>
-                          <td class="text-primary">
-                            $23,789
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            3
-                          </td>
-                          <td>
-                            Sage Rodriguez
-                          </td>
-                          <td>
-                            Netherlands
-                          </td>
-                          <td>
-                            Baileux
-                          </td>
-                          <td class="text-primary">
-                            $56,142
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            4
-                          </td>
-                          <td>
-                            Philip Chaney
-                          </td>
-                          <td>
-                            Korea, South
-                          </td>
-                          <td>
-                            Overland Park
-                          </td>
-                          <td class="text-primary">
-                            $38,735
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            5
-                          </td>
-                          <td>
-                            Doris Greene
-                          </td>
-                          <td>
-                            Malawi
-                          </td>
-                          <td>
-                            Feldkirchen in Kärnten
-                          </td>
-                          <td class="text-primary">
-                            $63,542
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            6
-                          </td>
-                          <td>
-                            Mason Porter
-                          </td>
-                          <td>
-                            Chile
-                          </td>
-                          <td>
-                            Gloucester
-                          </td>
-                          <td class="text-primary">
-                            $78,615
-                          </td>
-                        </tr>
+                    
+                      {% endfor %}
                       </tbody>
                     </table>
                   </div>
