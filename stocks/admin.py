@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError
 # Register your models here.
 User = get_user_model()
 
@@ -102,7 +103,9 @@ class StockForm(forms.ModelForm):
             except:
                 raise forms.ValidationError(
                     f'Stock of "{equipment}" not added yet in Stock of Admin!"')
-                return
+            
+            if Stock.objects.filter(user=user,equipment=equipment).exists:
+                raise forms.ValidationError(f'Stock of "{equipment}" is already exist for {user}.Please Update that stock!"')
 
             if quantity >= superuser_equipment.quantity:
                 raise forms.ValidationError(
@@ -110,7 +113,10 @@ class StockForm(forms.ModelForm):
             return self.cleaned_data
 
         return self.cleaned_data
-
+    
+ 
+    
+ 
 
 @admin.register(Stock)
 class StockAdmin(admin.ModelAdmin):
@@ -125,6 +131,8 @@ class StockAdmin(admin.ModelAdmin):
         if obj is not None:
             self.previous_quantity = obj.quantity
         return super().get_form(request, obj=obj, **kwargs)
+    
+
     
  
     

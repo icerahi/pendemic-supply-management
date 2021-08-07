@@ -46,12 +46,12 @@ class Stock(models.Model):
         verbose_name = 'Equipments Stock'
         ordering = ['-updated']
         # unique_together = (("user", "equipment"),)
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'equipment', ],
-                name="Can't create multiple stock of same equipment,So update the existing equipment's quantity"
-            ),
-        ]
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=['user', 'equipment', ],
+        #         name="Can't create multiple stock of same equipment,So update the existing equipment's quantity"
+        #     ),
+        # ]
 
     @mark_safe
     def image_tag(self):

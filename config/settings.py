@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'stocks',
     'accounts',
     'articles',
+    'dashboard',
 
 
 ]
